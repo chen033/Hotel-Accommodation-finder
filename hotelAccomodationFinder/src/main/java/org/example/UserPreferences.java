@@ -9,12 +9,12 @@ public class UserPreferences {
     private int floorlvl;
     private boolean wifi;
     private boolean airConditioning;
-    private boolean parking;
+    private boolean pool;
     private int guests;
 
     public UserPreferences(int Minbudget, int Maxbudget, String travel, int roomType, String view, int floorlvl,
                            boolean wifi, boolean airConditioning,
-                           boolean parking, int guests) {
+                           boolean pool, int guests) {
         this.Minbudget = Minbudget;
         this.Maxbudget = Maxbudget;
         this.travel = travel;
@@ -23,7 +23,7 @@ public class UserPreferences {
         this.floorlvl = floorlvl;
         this.wifi = wifi;
         this.airConditioning = airConditioning;
-        this.parking = parking;
+        this.pool = pool;
         this.guests = guests;
     }
 
@@ -46,7 +46,7 @@ public class UserPreferences {
     public int getFloorlvl() { return floorlvl; }
     public boolean isWifi() { return wifi; }
     public boolean isAirConditioning() { return airConditioning; }
-    public boolean isParking() { return parking; }
+    public boolean ispool() { return pool; }
     public int getGuests() { return guests; }
 
     @Override
@@ -60,7 +60,7 @@ public class UserPreferences {
                 ", FloorLevel=" + floorlvl +
                 ", wifi=" + wifi +
                 ", airConditioning=" + airConditioning +
-                ", parking=" + parking +
+                ", pool=" + pool+
                 ", guests=" + guests +
                 '}';
     }

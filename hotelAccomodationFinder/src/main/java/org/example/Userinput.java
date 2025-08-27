@@ -12,7 +12,7 @@ public class Userinput {
         Scanner scanner = new Scanner(System.in);
         Queue<UserPreferences> preferencesQueue = new LinkedList<>();
 
-        System.out.println("=== Welcome to Hotel Finder ===");
+        System.out.println("=== Welcome to Hotel room Finder ===");
 
         // MinBudget
         int Minbudget;
@@ -122,8 +122,8 @@ public class Userinput {
         // Air Conditioning
         boolean ac = askYesNo(scanner, "Do you need Air Conditioning? (Yes/No): ");
 
-        // Parking
-        boolean parking = askYesNo(scanner, "Do you need Parking? (Yes/No): ");
+        // Pool
+        boolean pool = askYesNo(scanner, "Do you need the pool access  (Yes/No): ");
 
         // Guests (validate based on room type)
         int guests;
@@ -164,7 +164,7 @@ public class Userinput {
 
         // Create UserPreferences object and add to queue
         UserPreferences userPreferences = new UserPreferences(
-                Minbudget, Maxbudget,travel,roomType,view,floorlvl,wifi, ac, parking, guests
+                Minbudget, Maxbudget,travel,roomType,view,floorlvl,wifi, ac,pool, guests
         );
         preferencesQueue.add(userPreferences);
 
