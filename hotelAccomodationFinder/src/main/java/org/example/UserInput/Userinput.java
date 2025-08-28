@@ -1,6 +1,6 @@
-package org.example;
+package org.example.UserInput;
 
-import org.example.UserPreferences;
+//import org.example.UserPreferences;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -96,7 +96,8 @@ public class Userinput {
             view = scanner.nextLine().trim();
             if (view.equalsIgnoreCase("sea") ||
                     view.equalsIgnoreCase("garden") ||
-                    view.equalsIgnoreCase("city")) {
+                    view.equalsIgnoreCase("" +
+                            "")) {
                 break;
             } else {
                 System.out.println(" Invalid choice. Please enter Sea,Garden or City.");
