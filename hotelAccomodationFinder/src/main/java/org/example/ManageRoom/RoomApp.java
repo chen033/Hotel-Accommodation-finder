@@ -14,7 +14,7 @@ public class RoomApp {
 
             switch (choice) {
                 case 1 -> addRoom();
-                case 2 -> roomManager.displayRooms();
+                case 2 -> roomManager.displayRooms(); // Display LinkedList
                 case 3 -> updateRoom();
                 case 4 -> deleteRoom();
                 case 5 -> System.exit(0);
@@ -22,53 +22,83 @@ public class RoomApp {
         }
     }
 
+    // ---------- Add Room ----------
     private void addRoom() {
         int floor = getIntInput("Floor Level (1-5): ", 1, 5);
         int roomNumber = roomManager.getNextRoomNumberForFloor(floor);
         System.out.println("Assigned Room Number: " + roomNumber);
 
-        String type = getOptionInput("Room Type (Single/Double/Suite): ", "Single","Double","Suite");
-        String view = getOptionInput("Room View (Sea/Garden/City): ", "Sea","Garden","City");
+        String type = getOptionInput("Room Type (Single/Double/Suite): ", "Single", "Double", "Suite");
+        String view = getOptionInput("Room View (Sea/Garden/City): ", "Sea", "Garden", "City");
         double budget = getPositiveDouble("Budget per Night: ");
         String facilities = getFacilities();
         int guests = getIntInput("Guest Number: ", 1, 20);
 
         Room room = new Room(roomNumber, type, view, floor, budget, facilities, guests);
-        System.out.println(roomManager.addRoom(room) ? "Room added!" : "Failed to add room!");
+
+        // Add to LinkedList + Database
+        if (roomManager.addRoom(room)) {
+            System.out.println("Room added!");
+        } else {
+            System.out.println("Failed to add room!");
+        }
     }
 
+    // ---------- Update Room ----------
     private void updateRoom() {
-        roomManager.displayRooms();
-        int roomNumber = getIntInput("Enter Room Number to update: ");
-        Room r = roomManager.getRoomByNumber(roomNumber);
-        if (r == null) { System.out.println("Room not found!"); return; }
+        roomManager.displayRooms(); // Display current LinkedList
 
-        String type = getOptionInput("New Type (Single/Double/Suite): ", "Single","Double","Suite");
+        int roomNumber = getIntInput("Enter Room Number to update: ");
+        Room r = roomManager.getRoomByNumber(roomNumber); // Search LinkedList
+        if (r == null) {
+            System.out.println("Room not found!");
+            return;
+        }
+
+        String type = getOptionInput("New Type (Single/Double/Suite): ", "Single", "Double", "Suite");
         double budget = getPositiveDouble("New Budget per Night: ");
         String facilities = getFacilities();
         int guests = getIntInput("New Guest Number: ", 1, 20);
 
-        System.out.println(roomManager.updateRoomFields(roomNumber, type, budget, facilities, guests) ? "Updated!" : "Failed!");
+        // Update LinkedList + Database
+        if (roomManager.updateRoom(roomNumber, type, budget, facilities, guests)) {
+            System.out.println("Room updated!");
+        } else {
+            System.out.println("Failed to update room!");
+        }
     }
 
+    // ---------- Delete Room ----------
     private void deleteRoom() {
-        roomManager.displayRooms();
+        roomManager.displayRooms(); // Show current LinkedList
+
         int roomNumber = getIntInput("Enter Room Number to delete: ");
-        System.out.println(roomManager.deleteRoom(roomNumber) ? "Deleted!" : "Failed!");
+
+        // Remove from LinkedList + Database
+        if (roomManager.deleteRoom(roomNumber)) {
+            System.out.println("Room deleted!");
+        } else {
+            System.out.println("Failed to delete room!");
+        }
     }
 
     // ---------- Input Helpers ----------
     private int getIntInput(String prompt) {
         while (true) {
             System.out.print(prompt);
-            try { return Integer.parseInt(sc.nextLine().trim()); }
-            catch (NumberFormatException e) { System.out.println("Invalid number!"); }
+            try {
+                return Integer.parseInt(sc.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid number!");
+            }
         }
     }
 
     private int getIntInput(String prompt, int min, int max) {
         int val;
-        do { val = getIntInput(prompt); } while (val < min || val > max);
+        do {
+            val = getIntInput(prompt);
+        } while (val < min || val > max);
         return val;
     }
 
@@ -76,8 +106,11 @@ public class RoomApp {
         double val;
         do {
             System.out.print(prompt);
-            try { val = Double.parseDouble(sc.nextLine().trim()); }
-            catch (NumberFormatException e) { val = -1; }
+            try {
+                val = Double.parseDouble(sc.nextLine().trim());
+            } catch (NumberFormatException e) {
+                val = -1;
+            }
         } while (val <= 0);
         return val;
     }
@@ -92,7 +125,7 @@ public class RoomApp {
     }
 
     private String getFacilities() {
-        String[] allowed = {"wifi","aircondition","pool"};
+        String[] allowed = {"wifi", "aircondition", "pool"};
         while (true) {
             System.out.print("Facilities (wifi,aircondition,pool): ");
             String input = sc.nextLine().trim();
@@ -100,7 +133,10 @@ public class RoomApp {
             for (String f : input.split(",")) {
                 boolean match = false;
                 for (String a : allowed) if (a.equalsIgnoreCase(f.trim())) match = true;
-                if (!match) { valid = false; break; }
+                if (!match) {
+                    valid = false;
+                    break;
+                }
             }
             if (valid) return input;
             System.out.println("Invalid facilities!");

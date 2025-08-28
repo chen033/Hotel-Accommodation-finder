@@ -4,21 +4,25 @@ import DatabaseConnection.SQLiteConnection;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 public class RoomManager {
-    private final List<Room> rooms = new LinkedList<>();
+
+    // LinkedList to store rooms dynamically in memory
+    private final LinkedList<Room> rooms = new LinkedList<>();
     private final Connection connection = SQLiteConnection.connect();
 
     public RoomManager() {
-        loadRoomsFromDB();
+        loadRoomsFromDB(); // load rooms from database into LinkedList
     }
 
     private void loadRoomsFromDB() {
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM Room")) {
-            rooms.clear();
+            rooms.clear(); // clear LinkedList before loading
             while (rs.next()) {
-                rooms.add(new Room(
+                // add to LinkedList using addLast()
+                rooms.addLast(new Room(
                         rs.getInt("roomNumber"),
                         rs.getString("type"),
                         rs.getString("roomView"),
@@ -33,21 +37,30 @@ public class RoomManager {
         }
     }
 
+    // Search LinkedList for a room
     public Room getRoomByNumber(int roomNumber) {
-        return rooms.stream().filter(r -> r.getRoomNumber() == roomNumber).findFirst().orElse(null);
+        ListIterator<Room> it = rooms.listIterator();
+        while (it.hasNext()) {
+            Room r = it.next();
+            if (r.getRoomNumber() == roomNumber) return r;
+        }
+        return null;
     }
 
+    // Get next room number for a floor
     public int getNextRoomNumberForFloor(int floorLevel) {
         int max = floorLevel * 100;
-        for (Room r : rooms)
-            if (r.getFloorLevel() == floorLevel && r.getRoomNumber() > max)
-                max = r.getRoomNumber();
+        for (Room r : rooms) {
+            if (r.getFloorLevel() == floorLevel && r.getRoomNumber() > max) max = r.getRoomNumber();
+        }
         return max + 1;
     }
 
+    // ---------- Add using LinkedList algorithm ----------
     public boolean addRoom(Room room) {
         String sql = "INSERT INTO Room (roomNumber,type,roomView,floorLevel,budgetPerNight,facilities,guestNumber) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            // Add to DB
             pstmt.setInt(1, room.getRoomNumber());
             pstmt.setString(2, room.getType());
             pstmt.setString(3, room.getRoomView());
@@ -56,7 +69,9 @@ public class RoomManager {
             pstmt.setString(6, room.getFacilities());
             pstmt.setInt(7, room.getGuestNumber());
             pstmt.executeUpdate();
-            rooms.add(room);
+
+            // Add to LinkedList (at end)
+            rooms.addLast(room);
             return true;
         } catch (SQLException e) {
             System.out.println("Add room failed: " + e.getMessage());
@@ -64,21 +79,31 @@ public class RoomManager {
         }
     }
 
-    public boolean updateRoomFields(int roomNumber, String type, double budget, String facilities, int guests) {
+    // ---------- Update using LinkedList algorithm ----------
+    public boolean updateRoom(int roomNumber, String type, double budget, String facilities, int guests) {
         String sql = "UPDATE Room SET type=?, budgetPerNight=?, facilities=?, guestNumber=? WHERE roomNumber=?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            // Update DB
             pstmt.setString(1, type);
             pstmt.setDouble(2, budget);
             pstmt.setString(3, facilities);
             pstmt.setInt(4, guests);
             pstmt.setInt(5, roomNumber);
             int updated = pstmt.executeUpdate();
+
             if (updated > 0) {
-                Room r = getRoomByNumber(roomNumber);
-                r.setType(type);
-                r.setBudgetPerNight(budget);
-                r.setFacilities(facilities);
-                r.setGuestNumber(guests);
+                // Update in LinkedList using ListIterator
+                ListIterator<Room> it = rooms.listIterator();
+                while (it.hasNext()) {
+                    Room r = it.next();
+                    if (r.getRoomNumber() == roomNumber) {
+                        r.setType(type);
+                        r.setBudgetPerNight(budget);
+                        r.setFacilities(facilities);
+                        r.setGuestNumber(guests);
+                        break;
+                    }
+                }
             }
             return updated > 0;
         } catch (SQLException e) {
@@ -87,12 +112,22 @@ public class RoomManager {
         }
     }
 
+    // ---------- Delete using LinkedList algorithm ----------
     public boolean deleteRoom(int roomNumber) {
         String sql = "DELETE FROM Room WHERE roomNumber=?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            // Delete from DB
             pstmt.setInt(1, roomNumber);
             pstmt.executeUpdate();
-            rooms.removeIf(r -> r.getRoomNumber() == roomNumber);
+
+            // Delete from LinkedList using ListIterator.remove()
+            ListIterator<Room> it = rooms.listIterator();
+            while (it.hasNext()) {
+                if (it.next().getRoomNumber() == roomNumber) {
+                    it.remove();
+                    break;
+                }
+            }
             return true;
         } catch (SQLException e) {
             System.out.println("Delete failed: " + e.getMessage());
@@ -100,11 +135,20 @@ public class RoomManager {
         }
     }
 
+    // ---------- Display all rooms using LinkedList traversal ----------
     public void displayRooms() {
-        if (rooms.isEmpty()) { System.out.println("No rooms available."); return; }
+        if (rooms.isEmpty()) {
+            System.out.println("No rooms available.");
+            return;
+        }
         System.out.println("Rooms:");
-        for (Room r : rooms) System.out.println(r);
+        ListIterator<Room> it = rooms.listIterator();
+        while (it.hasNext()) {
+            System.out.println(it.next());
+        }
     }
 
-    public List<Room> getRooms() { return rooms; }
+    public LinkedList<Room> getRooms() {
+        return rooms;
+    }
 }
