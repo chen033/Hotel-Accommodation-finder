@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class SQLiteConnection {
-    private static final String URL = "jdbc:sqlite:C:\\Users\\User\\Downloads\\Hotel-Room-finder.db";
+    private static final String URL = "jdbc:sqlite:C:\\Users\\User\\Downloads\\New folder (6)\\Hotel-Accommodation-finder\\hotelAccomodationFinder\\Hotel-Room-finder.db";
 
     public static Connection connect() {
         try {
