@@ -1,4 +1,4 @@
-package org.example.UserInput;
+package org.example;
 
 public class UserPreferences {
     private int Minbudget;
