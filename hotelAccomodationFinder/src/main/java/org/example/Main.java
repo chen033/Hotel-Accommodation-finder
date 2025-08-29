@@ -1,23 +1,33 @@
 package org.example;
 
+import DatabaseConnection.RoomSeeder;
+import DatabaseConnection.SQLiteConnection;
 import org.example.ManageRoom.RoomApp;
 import org.example.ManageRoom.RoomManager;
 import org.example.PreferenceMatching.RoomMatcher;
 import org.example.UserInput.UserPreferences;
 import org.example.UserInput.Userinput;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        Connection conn = SQLiteConnection.connect();
+
+        // 2️⃣ Seed the 50 hardcoded rooms (only inserts missing ones)
+        RoomSeeder.seedRooms(conn);
+
+        // 3️⃣ Now start your app logic
         Scanner sc = new Scanner(System.in);
         System.out.println("Select functionality to run:");
         System.out.println("1. Room Manager");
-        System.out.println("2. Accomodation finder");
+        System.out.println("2. Accommodation finder");
         int choice = sc.nextInt();
         sc.nextLine(); // consume newline
+
 
         switch (choice) {
             case 1 -> {
