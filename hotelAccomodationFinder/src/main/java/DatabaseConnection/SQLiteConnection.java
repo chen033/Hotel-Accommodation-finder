@@ -7,11 +7,11 @@ import java.io.File;
 
 public class SQLiteConnection {
 
-    private static final String URL = "jdbc:sqlite:D:\\HNDSE\\Hotel-Accommodation-finder\\hotel.db";
+    private static final String URL = "jdbc:sqlite:C:\\Users\\User\\Downloads\\New folder (6)\\Hotel-Accommodation-finder\\hotelAccomodationFinder\\Hotel-Room-finder.db";
 
     public static Connection connect() {
         // Check if the database file exists
-        File dbFile = new File("D:\\HNDSE\\Hotel-Accommodation-finder\\hotel.db");
+        File dbFile = new File("C:\\Users\\User\\Downloads\\New folder (6)\\Hotel-Accommodation-finder\\hotelAccomodationFinder\\Hotel-Room-finder.db");
         if (!dbFile.exists()) {
             System.out.println("Database file not found at: " + dbFile.getAbsolutePath());
             return null;
@@ -19,7 +19,7 @@ public class SQLiteConnection {
 
         try {
             Connection conn = DriverManager.getConnection(URL);
-            System.out.println("Connected to SQLite database!");
+           // System.out.println("Connected to SQLite database!");
             return conn;
         } catch (SQLException e) {
             System.out.println("Database connection failed: " + e.getMessage());
