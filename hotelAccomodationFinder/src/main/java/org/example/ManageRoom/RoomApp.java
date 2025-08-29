@@ -14,7 +14,7 @@ public class RoomApp {
 
             switch (choice) {
                 case 1 -> addRoom();
-                case 2 -> roomManager.displayRooms(); // Display LinkedList
+                case 2 -> roomManager.displayRooms();
                 case 3 -> updateRoom();
                 case 4 -> deleteRoom();
                 case 5 -> System.exit(0);
@@ -28,57 +28,54 @@ public class RoomApp {
         int roomNumber = roomManager.getNextRoomNumberForFloor(floor);
         System.out.println("Assigned Room Number: " + roomNumber);
 
-        String type = getOptionInput("Room Type (Single/Double/Suite): ", "Single", "Double", "Suite");
-        String view = getOptionInput("Room View (Sea/Garden/City): ", "Sea", "Garden", "City");
-        double budget = getPositiveDouble("Budget per Night: ");
+        String type = getRoomType();
+        String view = getRoomView();
+        double budget = getBudget();
         String facilities = getFacilities();
         int guests = getIntInput("Guest Number: ", 1, 20);
 
         Room room = new Room(roomNumber, type, view, floor, budget, facilities, guests);
 
-        // Add to LinkedList + Database
         if (roomManager.addRoom(room)) {
-            System.out.println("Room added!");
+            System.out.println("✅ Room added!");
         } else {
-            System.out.println("Failed to add room!");
+            System.out.println("❌ Failed to add room!");
         }
     }
 
     // ---------- Update Room ----------
     private void updateRoom() {
-        roomManager.displayRooms(); // Display current LinkedList
+        roomManager.displayRooms();
 
         int roomNumber = getIntInput("Enter Room Number to update: ");
-        Room r = roomManager.getRoomByNumber(roomNumber); // Search LinkedList
+        Room r = roomManager.getRoomByNumber(roomNumber);
         if (r == null) {
-            System.out.println("Room not found!");
+            System.out.println("❌ Room not found!");
             return;
         }
 
-        String type = getOptionInput("New Type (Single/Double/Suite): ", "Single", "Double", "Suite");
-        double budget = getPositiveDouble("New Budget per Night: ");
+        String type = getRoomType();
+        String view = getRoomView();
+        double budget = getBudget();
         String facilities = getFacilities();
         int guests = getIntInput("New Guest Number: ", 1, 20);
 
-        // Update LinkedList + Database
         if (roomManager.updateRoom(roomNumber, type, budget, facilities, guests)) {
-            System.out.println("Room updated!");
+            System.out.println("✅ Room updated!");
         } else {
-            System.out.println("Failed to update room!");
+            System.out.println("❌ Failed to update room!");
         }
     }
 
     // ---------- Delete Room ----------
     private void deleteRoom() {
-        roomManager.displayRooms(); // Show current LinkedList
-
+        roomManager.displayRooms();
         int roomNumber = getIntInput("Enter Room Number to delete: ");
 
-        // Remove from LinkedList + Database
         if (roomManager.deleteRoom(roomNumber)) {
-            System.out.println("Room deleted!");
+            System.out.println("✅ Room deleted!");
         } else {
-            System.out.println("Failed to delete room!");
+            System.out.println("❌ Failed to delete room!");
         }
     }
 
@@ -89,7 +86,7 @@ public class RoomApp {
             try {
                 return Integer.parseInt(sc.nextLine().trim());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid number!");
+                System.out.println("❌ Invalid number!");
             }
         }
     }
@@ -98,48 +95,90 @@ public class RoomApp {
         int val;
         do {
             val = getIntInput(prompt);
+            if (val < min || val > max) {
+                System.out.println("❌ Value must be between " + min + " and " + max + "!");
+            }
         } while (val < min || val > max);
         return val;
     }
 
-    private double getPositiveDouble(String prompt) {
+    private double getBudget() {
         double val;
         do {
-            System.out.print(prompt);
+            System.out.print("Budget per Night (5000 - 50000): ");
             try {
                 val = Double.parseDouble(sc.nextLine().trim());
+                if (val < 5000 || val > 50000) {
+                    System.out.println("❌ Invalid budget! Must be between 5000 and 50000.");
+                    val = -1;
+                }
             } catch (NumberFormatException e) {
+                System.out.println("❌ Invalid input! Enter a valid number.");
                 val = -1;
             }
         } while (val <= 0);
         return val;
     }
 
-    private String getOptionInput(String prompt, String... options) {
-        while (true) {
-            System.out.print(prompt);
-            String input = sc.nextLine().trim();
-            for (String o : options) if (o.equalsIgnoreCase(input)) return o;
-            System.out.println("Invalid! Choose: " + String.join("/", options));
-        }
+    private String getRoomType() {
+        System.out.println("Select Room Type:");
+        System.out.println("1. Single");
+        System.out.println("2. Double");
+        System.out.println("3. Suite");
+        int choice = getIntInput("Enter choice (1-3): ", 1, 3);
+        return switch (choice) {
+            case 1 -> "Single";
+            case 2 -> "Double";
+            case 3 -> "Suite";
+            default -> "Single";
+        };
+    }
+
+    private String getRoomView() {
+        System.out.println("Select Room View:");
+        System.out.println("1. Sea");
+        System.out.println("2. Garden");
+        System.out.println("3. City");
+        int choice = getIntInput("Enter choice (1-3): ", 1, 3);
+        return switch (choice) {
+            case 1 -> "Sea";
+            case 2 -> "Garden";
+            case 3 -> "City";
+            default -> "Sea";
+        };
     }
 
     private String getFacilities() {
-        String[] allowed = {"wifi", "aircondition", "pool"};
+        String[] options = {"wifi", "aircondition", "pool"};
+        System.out.println("Select Facilities (enter numbers separated by commas):");
+        System.out.println("1. wifi");
+        System.out.println("2. aircondition");
+        System.out.println("3. pool");
+
         while (true) {
-            System.out.print("Facilities (wifi,aircondition,pool): ");
+            System.out.print("Enter choices (e.g., 1,2 or 1,2,3): ");
             String input = sc.nextLine().trim();
+            String[] parts = input.split(",");
+            StringBuilder sb = new StringBuilder();
             boolean valid = true;
-            for (String f : input.split(",")) {
-                boolean match = false;
-                for (String a : allowed) if (a.equalsIgnoreCase(f.trim())) match = true;
-                if (!match) {
+
+            for (String p : parts) {
+                try {
+                    int num = Integer.parseInt(p.trim());
+                    if (num < 1 || num > 3) {
+                        valid = false;
+                        break;
+                    }
+                    if (sb.length() > 0) sb.append(",");
+                    sb.append(options[num - 1]);
+                } catch (NumberFormatException e) {
                     valid = false;
                     break;
                 }
             }
-            if (valid) return input;
-            System.out.println("Invalid facilities!");
+
+            if (valid) return sb.toString();
+            System.out.println("❌ Invalid facilities! Please enter numbers between 1 and 3 separated by commas.");
         }
     }
 }
