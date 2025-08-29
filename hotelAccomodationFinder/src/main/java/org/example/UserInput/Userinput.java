@@ -1,7 +1,5 @@
 package org.example.UserInput;
 
-//import org.example.UserPreferences;
-
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -31,7 +29,6 @@ public class Userinput {
             }
         }
 
-
         // MaxBudget
         int Maxbudget;
         while (true) {
@@ -53,9 +50,6 @@ public class Userinput {
             }
         }
 
-
-
-
         // Travel purpose
         String travel;
         while (true) {
@@ -69,10 +63,7 @@ public class Userinput {
             }
         }
 
-
-
         // Room Type
-
         int roomType;
         while (true) {
             System.out.println("Select Room Type:");
@@ -90,20 +81,23 @@ public class Userinput {
             }
         }
 
-        String view;
+        // View
+        int view;
         while (true) {
-            System.out.print("Do you prefer a city view, garden view, or sea view?\n ");
-            view = scanner.nextLine().trim();
-            if (view.equalsIgnoreCase("sea") ||
-                    view.equalsIgnoreCase("garden") ||
-                    view.equalsIgnoreCase("" +
-                            "")) {
+            System.out.println("Do you prefer a Sea view, Garden view, or City view?");
+            System.out.println("1. Sea");
+            System.out.println("2. Garden");
+            System.out.println("3. City");
+            System.out.print("Enter choice (1/2/3): ");
+            String input = scanner.nextLine().trim();
+
+            if (input.equals("1") || input.equals("2") || input.equals("3")) {
+                view = Integer.parseInt(input);
                 break;
             } else {
-                System.out.println(" Invalid choice. Please enter Sea,Garden or City.");
+                System.out.println(" Invalid choice. Please enter 1, 2, or 3.");
             }
         }
-
 
         // floorlvl
         int floorlvl;
@@ -117,6 +111,7 @@ public class Userinput {
                 System.out.println(" Invalid input. Please enter a number.");
             }
         }
+
         // WiFi
         boolean wifi = askYesNo(scanner, "Do you need WiFi? (Yes/No): ");
 
@@ -124,7 +119,7 @@ public class Userinput {
         boolean ac = askYesNo(scanner, "Do you need Air Conditioning? (Yes/No): ");
 
         // Pool
-        boolean pool = askYesNo(scanner, "Do you need the pool access  (Yes/No): ");
+        boolean pool = askYesNo(scanner, "Do you need pool access? (Yes/No): ");
 
         // Guests (validate based on room type)
         int guests;
@@ -144,7 +139,7 @@ public class Userinput {
                         if (guests <= 2) valid = true;
                         break;
                     case 3: // Suite
-                        if (guests <= 4) valid = true; // you can adjust max
+                        if (guests <= 4) valid = true;
                         break;
                 }
 
@@ -162,10 +157,9 @@ public class Userinput {
             }
         }
 
-
         // Create UserPreferences object and add to queue
         UserPreferences userPreferences = new UserPreferences(
-                Minbudget, Maxbudget,travel,roomType,view,floorlvl,wifi, ac,pool, guests
+                Minbudget, Maxbudget, travel, roomType, view, floorlvl, wifi, ac, pool, guests
         );
         preferencesQueue.add(userPreferences);
 
@@ -187,5 +181,4 @@ public class Userinput {
             }
         }
     }
-
 }
