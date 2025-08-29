@@ -5,14 +5,14 @@ public class UserPreferences {
     private int Maxbudget;
     private String travel;
     private int roomType; // store as number (1,2,3)
-    private String view;
+    private int view;     // store as number (1,2,3)
     private int floorlvl;
     private boolean wifi;
     private boolean airConditioning;
     private boolean pool;
     private int guests;
 
-    public UserPreferences(int Minbudget, int Maxbudget, String travel, int roomType, String view, int floorlvl,
+    public UserPreferences(int Minbudget, int Maxbudget, String travel, int roomType, int view, int floorlvl,
                            boolean wifi, boolean airConditioning,
                            boolean pool, int guests) {
         this.Minbudget = Minbudget;
@@ -30,9 +30,9 @@ public class UserPreferences {
     public int getMinbudget() { return Minbudget; }
     public int getMaxbudget() { return Maxbudget; }
     public String getTravel() { return travel; }
-    public int getRoomTypeNumber() { return roomType; }
 
-    // convert number → text
+    // --- Room Type ---
+    public int getRoomTypeNumber() { return roomType; }
     public String getRoomTypeName() {
         switch (roomType) {
             case 1: return "Single";
@@ -42,7 +42,17 @@ public class UserPreferences {
         }
     }
 
-    public String getView() { return view; }
+    // --- View ---
+    public int getViewNumber() { return view; }
+    public String getView() {   // keep name consistent with RoomMatcher
+        switch (view) {
+            case 1: return "Sea";
+            case 2: return "Garden";
+            case 3: return "City";
+            default: return "Unknown";
+        }
+    }
+
     public int getFloorlvl() { return floorlvl; }
     public boolean isWifi() { return wifi; }
     public boolean isAirConditioning() { return airConditioning; }
@@ -56,12 +66,14 @@ public class UserPreferences {
                 ", Maxbudget=" + Maxbudget +
                 ", travel='" + travel + '\'' +
                 ", roomType=" + getRoomTypeName() + " (" + roomType + ")" +
-                ", view='" + view + '\'' +
+                ", view=" + getView() + " (" + view + ")" +
                 ", FloorLevel=" + floorlvl +
                 ", wifi=" + wifi +
                 ", airConditioning=" + airConditioning +
-                ", pool=" + pool+
+                ", pool=" + pool +
                 ", guests=" + guests +
                 '}';
     }
+
+
 }
