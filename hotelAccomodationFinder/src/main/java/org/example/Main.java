@@ -8,6 +8,7 @@ import org.example.UserInput.UserPreferences;
 import org.example.UserInput.Userinput;
 
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
@@ -32,24 +33,29 @@ public class Main {
                 app.start();
             }
             case 2 -> {
-                // Automatically ask user preferences when selecting this
+                // Collect user preferences once and create copies so we don't re-prompt the user
                 Queue<UserPreferences> userPrefsQueue = Userinput.getUserPreferences();
+
+                // Make two independent copies; matchPreferences will poll its copy
+                Queue<UserPreferences> prefsForMatching = new LinkedList<>(userPrefsQueue);
+                Queue<UserPreferences> prefsForBudget = new LinkedList<>(userPrefsQueue);
 
                 RoomManager roomManager = new RoomManager(); // Load rooms from DB
                 RoomMatcher matcher = new RoomMatcher();
 
-                // Keep original queue usage (matchPreferences will poll it)
-                List<RoomMatcher.ScoredRoom> rankedRooms = matcher.matchPreferences(userPrefsQueue, roomManager);
+                // Use a copy for matching (preserves original userPrefsQueue elsewhere if needed)
+                List<RoomMatcher.ScoredRoom> rankedRooms = matcher.matchPreferences(prefsForMatching, roomManager);
 
                 // Use RoomOutput to display top-ranked rooms (up to 10)
                 org.example.PreferenceMatching.RoomOutput.printRankedRooms(rankedRooms);
 
-                // Since matchPreferences consumed the queue, create a fresh queue from user input again for budget-only display
-                Queue<UserPreferences> budgetPrefs = Userinput.getUserPreferences();
-                if (!budgetPrefs.isEmpty()) {
-                    UserPreferences firstPref = budgetPrefs.poll();
+                // For budget-only matching, use the first preference from prefsForBudget (no re-prompt)
+                if (!prefsForBudget.isEmpty()) {
+                    UserPreferences firstPref = prefsForBudget.poll();
                     List<RoomMatcher.ScoredRoom> budgetMatches = matcher.matchByBudget(firstPref, roomManager);
                     org.example.PreferenceMatching.RoomOutput.printBudgetScoredRooms(budgetMatches, firstPref);
+                } else {
+                    System.out.println("No preference provided for budget-only matching.");
                 }
             }
             default -> System.out.println("Invalid choice!");
