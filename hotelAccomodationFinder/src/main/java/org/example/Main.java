@@ -21,7 +21,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
 
         while (true) {
-            System.out.println("Select functionality to run:");
+            System.out.println("Select functionality to run:..........");
             System.out.println("1. Room Manager  — Requires admin login. You will be prompted for username/password.");
             System.out.println("   Use username: admin  password: admin123 to access the Room Manager menu.");
             System.out.println("2. Accommodation finder");
