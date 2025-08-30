@@ -1,6 +1,5 @@
 package org.example;
 
-import DatabaseConnection.RoomSeeder;
 import DatabaseConnection.SQLiteConnection;
 import org.example.ManageRoom.RoomApp;
 import org.example.ManageRoom.RoomManager;
@@ -8,17 +7,15 @@ import org.example.PreferenceMatching.RoomMatcher;
 import org.example.UserInput.UserPreferences;
 import org.example.UserInput.Userinput;
 
-import java.sql.Connection;
 import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Connection conn = SQLiteConnection.connect();
+        // Connection is no longer stored here; SQLiteConnection.connect() is used inside managers where needed.
 
-        // 2️⃣ Seed the 50 hardcoded rooms (only inserts missing ones)
-        RoomSeeder.seedRooms(conn);
+        // RoomSeeder removed: database seeding is handled externally.
 
         // 3️⃣ Now start your app logic
         Scanner sc = new Scanner(System.in);
@@ -41,11 +38,18 @@ public class Main {
                 RoomManager roomManager = new RoomManager(); // Load rooms from DB
                 RoomMatcher matcher = new RoomMatcher();
 
+                // Keep original queue usage (matchPreferences will poll it)
                 List<RoomMatcher.ScoredRoom> rankedRooms = matcher.matchPreferences(userPrefsQueue, roomManager);
 
-                System.out.println("\n=== Ranked Rooms based on your Preferences ===");
-                for (RoomMatcher.ScoredRoom sr : rankedRooms) {
-                    System.out.println(sr.room + " | Score: " + sr.score);
+                // Use RoomOutput to display top-ranked rooms (up to 10)
+                org.example.PreferenceMatching.RoomOutput.printRankedRooms(rankedRooms);
+
+                // Since matchPreferences consumed the queue, create a fresh queue from user input again for budget-only display
+                Queue<UserPreferences> budgetPrefs = Userinput.getUserPreferences();
+                if (!budgetPrefs.isEmpty()) {
+                    UserPreferences firstPref = budgetPrefs.poll();
+                    List<RoomMatcher.ScoredRoom> budgetMatches = matcher.matchByBudget(firstPref, roomManager);
+                    org.example.PreferenceMatching.RoomOutput.printBudgetScoredRooms(budgetMatches, firstPref);
                 }
             }
             default -> System.out.println("Invalid choice!");

@@ -31,4 +31,18 @@ public class RoomOutput {
             System.out.println("No rooms matched your budget criteria.");
         }
     }
+
+    // New: print list of scored rooms (from matchByBudget) up to 10
+    public static void printBudgetScoredRooms(List<RoomMatcher.ScoredRoom> scoredRooms, org.example.UserInput.UserPreferences prefs) {
+        System.out.println("\n=== Rooms matched by budget (top results) ===");
+        int count = 0;
+        for (RoomMatcher.ScoredRoom sr : scoredRooms) {
+            if (count >= 10) break;
+            System.out.println(sr.room + " | Budget: " + sr.room.getBudgetPerNight() + " | Score: " + sr.score);
+            count++;
+        }
+        if (count == 0) {
+            System.out.println("No rooms available for the given budget.");
+        }
+    }
 }
