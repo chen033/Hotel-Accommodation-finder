@@ -9,7 +9,7 @@ public class RoomApp {
     public void start() {
         while (true) {
             System.out.println("\n--- Room Manager ---");
-            System.out.println("1. Add Room\n2. Display Rooms\n3. Update Room\n4. Delete Room\n5. Exit");
+            System.out.println("1. Add Room\n2. Display Rooms\n3. Update Room\n4. Delete Room\n5. Back to Main Menu");
             int choice = getIntInput("Choose an option: ", 1, 5);
 
             switch (choice) {
@@ -17,7 +17,10 @@ public class RoomApp {
                 case 2 -> roomManager.displayRooms();
                 case 3 -> updateRoom();
                 case 4 -> deleteRoom();
-                case 5 -> System.exit(0);
+                case 5 -> {
+                    System.out.println("Returning to main menu...");
+                    return; // go back to main menu instead of exiting the JVM
+                }
             }
         }
     }
@@ -60,7 +63,8 @@ public class RoomApp {
         String facilities = getFacilities();
         int guests = getIntInput("New Guest Number: ", 1, 20);
 
-        if (roomManager.updateRoom(roomNumber, type, budget, facilities, guests)) {
+        // pass 'view' to updateRoom to match new signature
+        if (roomManager.updateRoom(roomNumber, type, view, budget, facilities, guests)) {
             System.out.println("✅ Room updated!");
         } else {
             System.out.println("❌ Failed to update room!");
@@ -169,7 +173,7 @@ public class RoomApp {
                         valid = false;
                         break;
                     }
-                    if (sb.length() > 0) sb.append(",");
+                    if (sb.length() != 0) sb.append(",");
                     sb.append(options[num - 1]);
                 } catch (NumberFormatException e) {
                     valid = false;
