@@ -164,6 +164,19 @@ public class Userinput {
         preferencesQueue.add(userPreferences);
 
         System.out.println("\n Preferences saved successfully.");
+
+        // Print the user's entered preferences in a single horizontal summary line
+        String wifiStr = userPreferences.isWifi() ? "Yes" : "No";
+        String acStr = userPreferences.isAirConditioning() ? "Yes" : "No";
+        String poolStr = userPreferences.ispool() ? "Yes" : "No";
+
+        String summary = String.format("=== My Preferences === \n Budget: %d-%d  | Travel: %s  | Room: %s  | View: %s  | Floor: %d  | WiFi: %s  | AC: %s  | Pool: %s  | Guests: %d",
+                userPreferences.getMinbudget(), userPreferences.getMaxbudget(), userPreferences.getTravel(),
+                userPreferences.getRoomTypeName(), userPreferences.getView(), userPreferences.getFloorlvl(),
+                wifiStr, acStr, poolStr, userPreferences.getGuests());
+
+        System.out.println(summary);
+
         return preferencesQueue;
     }
 

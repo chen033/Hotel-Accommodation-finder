@@ -3,7 +3,6 @@ package org.example.ManageRoom;
 import DatabaseConnection.SQLiteConnection;
 import java.sql.*;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.ListIterator;
 
 public class RoomManager {
@@ -80,15 +79,17 @@ public class RoomManager {
     }
 
     // ---------- Update using LinkedList algorithm ----------
-    public boolean updateRoom(int roomNumber, String type, double budget, String facilities, int guests) {
-        String sql = "UPDATE Room SET type=?, budgetPerNight=?, facilities=?, guestNumber=? WHERE roomNumber=?";
+    // Modified to also update roomView
+    public boolean updateRoom(int roomNumber, String type, String roomView, double budget, String facilities, int guests) {
+        String sql = "UPDATE Room SET type=?, roomView=?, budgetPerNight=?, facilities=?, guestNumber=? WHERE roomNumber=?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             // Update DB
             pstmt.setString(1, type);
-            pstmt.setDouble(2, budget);
-            pstmt.setString(3, facilities);
-            pstmt.setInt(4, guests);
-            pstmt.setInt(5, roomNumber);
+            pstmt.setString(2, roomView);
+            pstmt.setDouble(3, budget);
+            pstmt.setString(4, facilities);
+            pstmt.setInt(5, guests);
+            pstmt.setInt(6, roomNumber);
             int updated = pstmt.executeUpdate();
 
             if (updated > 0) {
@@ -101,6 +102,9 @@ public class RoomManager {
                         r.setBudgetPerNight(budget);
                         r.setFacilities(facilities);
                         r.setGuestNumber(guests);
+                        // roomView and floorLevel are final in Room class; to update view, recreate Room object in list
+                        Room updatedRoom = new Room(r.getRoomNumber(), type, roomView, r.getFloorLevel(), budget, facilities, guests);
+                        it.set(updatedRoom);
                         break;
                     }
                 }
