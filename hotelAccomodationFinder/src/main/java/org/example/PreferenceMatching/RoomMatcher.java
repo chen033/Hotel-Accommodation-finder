@@ -54,6 +54,44 @@ public class RoomMatcher {
         return rankedRooms;
     }
 
+    // New: match only by budget, return up to 10 best-scored rooms
+    public List<ScoredRoom> matchByBudget(UserPreferences pref, RoomManager roomManager) {
+        List<ScoredRoom> scored = new ArrayList<>();
+        LinkedList<Room> availableRooms = roomManager.getRooms();
+
+        double min = pref.getMinbudget();
+        double max = pref.getMaxbudget();
+
+        for (Room room : availableRooms) {
+            double budget = room.getBudgetPerNight();
+            double diff;
+            if (budget >= min && budget <= max) {
+                diff = 0; // inside budget is best
+            } else if (budget < min) {
+                diff = min - budget;
+            } else {
+                diff = budget - max;
+            }
+            // Score: higher is better. Inside budget gives highest score (100).
+            // For outside budget, penalize by difference but cap penalty so scores remain comparable.
+            double score = Math.max(0, 100 - Math.min(100, diff));
+            scored.add(new ScoredRoom(room, score));
+        }
+
+        // Sort by score desc, then by budget asc for tie-breaker
+        scored.sort((a, b) -> {
+            int c = Double.compare(b.score, a.score);
+            if (c != 0) return c;
+            return Double.compare(a.room.getBudgetPerNight(), b.room.getBudgetPerNight());
+        });
+
+        // Ensure at least up to 10 results (return all if fewer)
+        if (scored.size() > 10) {
+            return new ArrayList<>(scored.subList(0, 10));
+        }
+        return scored;
+    }
+
     private double calculateScore(UserPreferences user, Room room) {
         double score = 0;
 
