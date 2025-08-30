@@ -12,42 +12,52 @@ public class Userinput {
 
         System.out.println("=== Welcome to Hotel room Finder ===");
 
-        // MinBudget
-        int Minbudget;
-        while (true) {
-            System.out.print("Enter your minimum budget (5000 - 50000): ");
-            String input = scanner.nextLine();
-            if (input.matches("\\d+")) {
-                Minbudget = Integer.parseInt(input);
-                if (Minbudget >= 5000 && Minbudget <= 50000) {
-                    break;
-                } else {
-                    System.out.println(" Budget must be between 5000 and 50000.");
-                }
-            } else {
-                System.out.println(" Invalid input. Please enter a number.");
-            }
-        }
+        // Budget inputs (wrap both min and max in an outer loop so we can re-enter min if max < min)
+        int Minbudget = 0;
+        int Maxbudget = 0;
 
-        // MaxBudget
-        int Maxbudget;
+        outerLoop:
         while (true) {
-            System.out.print("Enter your maximum budget (5000 - 50000): ");
-            String input = scanner.nextLine();
-            if (input.matches("\\d+")) {
-                Maxbudget = Integer.parseInt(input);
-                if (Maxbudget >= 5000 && Maxbudget <= 50000) {
-                    if (Maxbudget >= Minbudget) {
+            // MinBudget
+            while (true) {
+                System.out.print("Enter your minimum budget (5000 - 50000): ");
+                String input = scanner.nextLine();
+                if (input.matches("\\d+")) {
+                    Minbudget = Integer.parseInt(input);
+                    if (Minbudget >= 5000 && Minbudget <= 50000) {
                         break;
                     } else {
-                        System.out.println(" Maximum budget must be greater than or equal to minimum budget.");
+                        System.out.println(" Budget must be between 5000 and 50000.");
                     }
                 } else {
-                    System.out.println(" Budget must be between 5000 and 50000.");
+                    System.out.println(" Invalid input. Please enter a number.");
                 }
-            } else {
-                System.out.println(" Invalid input. Please enter a number.");
             }
+
+            // MaxBudget
+            while (true) {
+                System.out.print("Enter your maximum budget (5000 - 50000): ");
+                String input = scanner.nextLine();
+                if (input.matches("\\d+")) {
+                    Maxbudget = Integer.parseInt(input);
+                    if (Maxbudget >= 5000 && Maxbudget <= 50000) {
+                        if (Maxbudget >= Minbudget) {
+                            break; // valid pair, exit max loop and then outer
+                        } else {
+                            System.out.println(" Maximum budget must be greater than or equal to minimum budget.");
+                            // go back to outer loop so Minbudget is requested again
+                            continue outerLoop;
+                        }
+                    } else {
+                        System.out.println(" Budget must be between 5000 and 50000.");
+                    }
+                } else {
+                    System.out.println(" Invalid input. Please enter a number.");
+                }
+            }
+
+            // If we reach here both Minbudget and Maxbudget are valid
+            break;
         }
 
         // Travel purpose
