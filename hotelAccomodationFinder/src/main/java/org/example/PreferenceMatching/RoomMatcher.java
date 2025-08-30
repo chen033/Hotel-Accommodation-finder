@@ -54,7 +54,7 @@ public class RoomMatcher {
         return rankedRooms;
     }
 
-    // New: match only by budget, return up to 10 best-scored rooms
+    // New: match only by budget, return all rooms sorted by budget-closeness score
     public List<ScoredRoom> matchByBudget(UserPreferences pref, RoomManager roomManager) {
         List<ScoredRoom> scored = new ArrayList<>();
         LinkedList<Room> availableRooms = roomManager.getRooms();
@@ -85,10 +85,7 @@ public class RoomMatcher {
             return Double.compare(a.room.getBudgetPerNight(), b.room.getBudgetPerNight());
         });
 
-        // Ensure at least up to 10 results (return all if fewer)
-        if (scored.size() > 10) {
-            return new ArrayList<>(scored.subList(0, 10));
-        }
+        // Return full sorted list (caller will choose top 10 and combine inside/outside)
         return scored;
     }
 
