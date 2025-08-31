@@ -10,7 +10,7 @@ public class RoomApp {
         while (true) {
             System.out.println("\n--- Room Manager ---");
             System.out.println("1. Add Room\n2. Display Rooms\n3. Update Room\n4. Delete Room\n5. Back to Main Menu");
-            int choice = getIntInput("Choose an option: ", 1, 5);
+            int choice = getIntInput("Choose an option: ", 5);
 
             switch (choice) {
                 case 1 -> addRoom();
@@ -27,7 +27,7 @@ public class RoomApp {
 
     // ---------- Add Room ----------
     private void addRoom() {
-        int floor = getIntInput("Floor Level (1-5): ", 1, 5);
+        int floor = getIntInput("Floor Level (1-5): ", 5);
         int roomNumber = roomManager.getNextRoomNumberForFloor(floor);
         System.out.println("Assigned Room Number: " + roomNumber);
 
@@ -35,7 +35,7 @@ public class RoomApp {
         String view = getRoomView();
         double budget = getBudget();
         String facilities = getFacilities();
-        int guests = getIntInput("Guest Number: ", 1, 20);
+        int guests = getIntInput("Guest Number: ", 20);
 
         Room room = new Room(roomNumber, type, view, floor, budget, facilities, guests);
 
@@ -61,7 +61,7 @@ public class RoomApp {
         String view = getRoomView();
         double budget = getBudget();
         String facilities = getFacilities();
-        int guests = getIntInput("New Guest Number: ", 1, 20);
+        int guests = getIntInput("New Guest Number: ", 20);
 
         // pass 'view' to updateRoom to match new signature
         if (roomManager.updateRoom(roomNumber, type, view, budget, facilities, guests)) {
@@ -95,33 +95,28 @@ public class RoomApp {
         }
     }
 
-    private int getIntInput(String prompt, int min, int max) {
+    private int getIntInput(String prompt, int max) {
         int val;
         do {
             val = getIntInput(prompt);
-            if (val < min || val > max) {
-                System.out.println("❌ Value must be between " + min + " and " + max + "!");
+            if (val < 1 || val > max) {
+                System.out.println("❌ Value must be between 1 and " + max + "!");
             }
-        } while (val < min || val > max);
+        } while (val < 1 || val > max);
         return val;
     }
 
     private double getBudget() {
-        double val;
-        do {
-            System.out.print("Budget per Night (5000 - 50000): ");
+        while (true) {
+            System.out.print("Budget per Night: ");
             try {
-                val = Double.parseDouble(sc.nextLine().trim());
-                if (val < 5000 || val > 50000) {
-                    System.out.println("❌ Invalid budget! Must be between 5000 and 50000.");
-                    val = -1;
-                }
+                double val = Double.parseDouble(sc.nextLine().trim());
+                if (val > 0) return val;
+                System.out.println("❌ Invalid budget! Must be greater than 0.");
             } catch (NumberFormatException e) {
                 System.out.println("❌ Invalid input! Enter a valid number.");
-                val = -1;
             }
-        } while (val <= 0);
-        return val;
+        }
     }
 
     private String getRoomType() {
@@ -129,7 +124,7 @@ public class RoomApp {
         System.out.println("1. Single");
         System.out.println("2. Double");
         System.out.println("3. Suite");
-        int choice = getIntInput("Enter choice (1-3): ", 1, 3);
+        int choice = getIntInput("Enter choice (1-3): ", 3);
         return switch (choice) {
             case 1 -> "Single";
             case 2 -> "Double";
@@ -143,7 +138,7 @@ public class RoomApp {
         System.out.println("1. Sea");
         System.out.println("2. Garden");
         System.out.println("3. City");
-        int choice = getIntInput("Enter choice (1-3): ", 1, 3);
+        int choice = getIntInput("Enter choice (1-3): ", 3);
         return switch (choice) {
             case 1 -> "Sea";
             case 2 -> "Garden";
@@ -173,7 +168,7 @@ public class RoomApp {
                         valid = false;
                         break;
                     }
-                    if (sb.length() != 0) sb.append(",");
+                    if (sb.length() > 0) sb.append(",");
                     sb.append(options[num - 1]);
                 } catch (NumberFormatException e) {
                     valid = false;

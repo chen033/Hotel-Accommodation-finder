@@ -36,7 +36,7 @@ public class Room {
     @Override
     public String toString() {
         return roomNumber + " | " + type + " | " + roomView + " | Floor: " + floorLevel +
-                " | Budget: $" + budgetPerNight + " | Facilities: " + facilities +
+                " | Budget: LKR." + budgetPerNight + " | Facilities: " + facilities +
                 " | Guests: " + guestNumber;
     }
 }
