@@ -25,7 +25,7 @@ public class RoomApp {
         }
     }
 
-    // ---------- Add Room ----------
+    // Add Room
     private void addRoom() {
         int floor = getIntInput("Floor Level (1-5): ", 5);
         int roomNumber = roomManager.getNextRoomNumberForFloor(floor);
@@ -40,20 +40,20 @@ public class RoomApp {
         Room room = new Room(roomNumber, type, view, floor, budget, facilities, guests);
 
         if (roomManager.addRoom(room)) {
-            System.out.println("✅ Room added!");
+            System.out.println("=Room added!");
         } else {
-            System.out.println("❌ Failed to add room!");
+            System.out.println("=Failed to add room!");
         }
     }
 
-    // ---------- Update Room ----------
+    // Update Room
     private void updateRoom() {
         roomManager.displayRooms();
 
         int roomNumber = getIntInput("Enter Room Number to update: ");
         Room r = roomManager.getRoomByNumber(roomNumber);
         if (r == null) {
-            System.out.println("❌ Room not found!");
+            System.out.println("= Room not found!");
             return;
         }
 
@@ -63,34 +63,33 @@ public class RoomApp {
         String facilities = getFacilities();
         int guests = getIntInput("New Guest Number: ", 20);
 
-        // pass 'view' to updateRoom to match new signature
         if (roomManager.updateRoom(roomNumber, type, view, budget, facilities, guests)) {
-            System.out.println("✅ Room updated!");
+            System.out.println("=Room updated!");
         } else {
-            System.out.println("❌ Failed to update room!");
+            System.out.println("=Failed to update room!");
         }
     }
 
-    // ---------- Delete Room ----------
+    //  Delete Room
     private void deleteRoom() {
         roomManager.displayRooms();
         int roomNumber = getIntInput("Enter Room Number to delete: ");
 
         if (roomManager.deleteRoom(roomNumber)) {
-            System.out.println("✅ Room deleted!");
+            System.out.println("=Room deleted!");
         } else {
-            System.out.println("❌ Failed to delete room!");
+            System.out.println("=Failed to delete room!");
         }
     }
 
-    // ---------- Input Helpers ----------
+    //  Input Helpers
     private int getIntInput(String prompt) {
         while (true) {
             System.out.print(prompt);
             try {
                 return Integer.parseInt(sc.nextLine().trim());
             } catch (NumberFormatException e) {
-                System.out.println("❌ Invalid number!");
+                System.out.println("=Invalid number!");
             }
         }
     }
@@ -100,7 +99,7 @@ public class RoomApp {
         do {
             val = getIntInput(prompt);
             if (val < 1 || val > max) {
-                System.out.println("❌ Value must be between 1 and " + max + "!");
+                System.out.println("=Value must be between 1 and " + max + "!");
             }
         } while (val < 1 || val > max);
         return val;
@@ -112,9 +111,9 @@ public class RoomApp {
             try {
                 double val = Double.parseDouble(sc.nextLine().trim());
                 if (val > 0) return val;
-                System.out.println("❌ Invalid budget! Must be greater than 0.");
+                System.out.println("= Invalid budget! Must be greater than 0.");
             } catch (NumberFormatException e) {
-                System.out.println("❌ Invalid input! Enter a valid number.");
+                System.out.println("=Invalid input! Enter a valid number.");
             }
         }
     }
@@ -177,7 +176,7 @@ public class RoomApp {
             }
 
             if (valid) return sb.toString();
-            System.out.println("❌ Invalid facilities! Please enter numbers between 1 and 3 separated by commas.");
+            System.out.println("=Invalid facilities! Please enter numbers between 1 and 3 separated by commas.");
         }
     }
 }

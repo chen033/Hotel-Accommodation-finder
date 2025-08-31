@@ -13,10 +13,8 @@ public class RoomOutput {
             double adjusted = sr.adjustedBudget;
             String outputLine;
             if (Double.compare(adjusted, base) == 0) {
-                // No surcharge: leisure user — print room (contains base budget) and score
                 outputLine = sr.room + " | Score: " + sr.score;
             } else {
-                // Business user: show room (with base budget) PLUS a separate Business Budget column
                 String roomStr = sr.room.toString();
                 double diff = adjusted - base;
                 String businessInfo = String.format(" | Business Budget: LKR.%,.0f (+LKR.%,.0f) | Meals: Breakfast & Dinner free", adjusted, diff);
@@ -46,7 +44,6 @@ public class RoomOutput {
         }
     }*/
 
-    // New: print list of scored rooms (from matchByBudget) up to 10
     public static void printBudgetScoredRooms(List<RoomMatcher.ScoredRoom> scoredRooms, org.example.UserInput.UserPreferences prefs) {
         System.out.println("\n=== Rooms matched by budget (top results) ===");
         if (scoredRooms == null || scoredRooms.isEmpty()) {
@@ -68,7 +65,6 @@ public class RoomOutput {
 
         int printed = 0;
 
-        // Print inside-budget results first
         if (!inside.isEmpty()) {
             System.out.println("\n-- Rooms within your budget --");
             for (RoomMatcher.ScoredRoom sr : inside) {
@@ -89,7 +85,6 @@ public class RoomOutput {
             }
         }
 
-        // If fewer than 10, fill with best outside-budget results (scoredRooms is already expected to be sorted by score desc)
         if (printed < 10 && !outside.isEmpty()) {
             System.out.println("\n-- Additional rooms close to your budget --");
             for (RoomMatcher.ScoredRoom sr : outside) {

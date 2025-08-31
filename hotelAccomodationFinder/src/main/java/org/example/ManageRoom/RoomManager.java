@@ -7,7 +7,6 @@ import java.util.ListIterator;
 
 public class RoomManager {
 
-    // LinkedList to store rooms dynamically in memory
     private final LinkedList<Room> rooms = new LinkedList<>();
     private final Connection connection = SQLiteConnection.connect();
 
@@ -40,7 +39,6 @@ public class RoomManager {
         }
     }
 
-    // Search LinkedList for a room
     public Room getRoomByNumber(int roomNumber) {
         ListIterator<Room> it = rooms.listIterator();
         while (it.hasNext()) {
@@ -50,7 +48,6 @@ public class RoomManager {
         return null;
     }
 
-    // Get next room number for a floor
     public int getNextRoomNumberForFloor(int floorLevel) {
         int max = floorLevel * 100;
         for (Room r : rooms) {
@@ -59,7 +56,6 @@ public class RoomManager {
         return max + 1;
     }
 
-    // ---------- Add using LinkedList algorithm ----------
     public boolean addRoom(Room room) {
         String sql = "INSERT INTO Room (roomNumber,type,roomView,floorLevel,budgetPerNight,facilities,guestNumber) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -73,7 +69,6 @@ public class RoomManager {
             pstmt.setInt(7, room.getGuestNumber());
             pstmt.executeUpdate();
 
-            // Add to LinkedList (at end)
             rooms.addLast(room);
             return true;
         } catch (SQLException e) {
@@ -82,8 +77,6 @@ public class RoomManager {
         }
     }
 
-    // ---------- Update using LinkedList algorithm ----------
-    // Modified to also update roomView
     public boolean updateRoom(int roomNumber, String type, String roomView, double budget, String facilities, int guests) {
         String sql = "UPDATE Room SET type=?, roomView=?, budgetPerNight=?, facilities=?, guestNumber=? WHERE roomNumber=?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -120,15 +113,12 @@ public class RoomManager {
         }
     }
 
-    // ---------- Delete using LinkedList algorithm ----------
     public boolean deleteRoom(int roomNumber) {
         String sql = "DELETE FROM Room WHERE roomNumber=?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            // Delete from DB
             pstmt.setInt(1, roomNumber);
             pstmt.executeUpdate();
 
-            // Delete from LinkedList using ListIterator.remove()
             ListIterator<Room> it = rooms.listIterator();
             while (it.hasNext()) {
                 if (it.next().getRoomNumber() == roomNumber) {
@@ -143,7 +133,6 @@ public class RoomManager {
         }
     }
 
-    // ---------- Display all rooms using LinkedList traversal ----------
     public void displayRooms() {
         if (rooms.isEmpty()) {
             System.out.println("No rooms available.");
