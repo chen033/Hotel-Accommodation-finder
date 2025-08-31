@@ -3,6 +3,8 @@ package org.example.UserInput;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
+import org.example.ManageRoom.RoomManager;
+import org.example.ManageRoom.Room;
 
 public class Userinput {
 
@@ -12,22 +14,43 @@ public class Userinput {
 
         System.out.println("=== Welcome to Hotel room Finder ===");
 
+        // Determine real-time budget bounds from DB
+        RoomManager roomManager = new RoomManager();
+        LinkedList<Room> roomList = roomManager.getRooms();
+        int dbMinBudget = 5000;
+        int dbMaxBudget = 50000;
+        if (roomList != null && !roomList.isEmpty()) {
+            dbMinBudget = Integer.MAX_VALUE;
+            dbMaxBudget = Integer.MIN_VALUE;
+            for (Room r : roomList) {
+                int b = (int) Math.round(r.getBudgetPerNight());
+                if (b < dbMinBudget) dbMinBudget = b;
+                if (b > dbMaxBudget) dbMaxBudget = b;
+            }
+            // Fallback if something went wrong
+            if (dbMinBudget == Integer.MAX_VALUE || dbMaxBudget == Integer.MIN_VALUE) {
+                dbMinBudget = 5000;
+                dbMaxBudget = 50000;
+            }
+        }
+
         // Budget inputs (wrap both min and max in an outer loop so we can re-enter min if max < min)
-        int Minbudget = 0;
-        int Maxbudget = 0;
+        int Minbudget;
+        int Maxbudget;
 
         outerLoop:
         while (true) {
             // MinBudget
             while (true) {
-                System.out.print("Enter your minimum budget (5000 - 50000): ");
+                System.out.print("Enter your minimum budget (" + dbMinBudget + " - " + dbMaxBudget + "): ");
                 String input = scanner.nextLine();
                 if (input.matches("\\d+")) {
                     Minbudget = Integer.parseInt(input);
-                    if (Minbudget >= 5000 && Minbudget <= 50000) {
+                    if (Minbudget >= dbMinBudget && Minbudget <= dbMaxBudget) {
                         break;
                     } else {
-                        System.out.println(" Budget must be between 5000 and 50000.");
+                        System.out.println(" Budget must be between " + dbMinBudget + " and " + dbMaxBudget + ".");
+                         // go back to outer loop to re-enter min
                     }
                 } else {
                     System.out.println(" Invalid input. Please enter a number.");
@@ -36,11 +59,11 @@ public class Userinput {
 
             // MaxBudget
             while (true) {
-                System.out.print("Enter your maximum budget (5000 - 50000): ");
+                System.out.print("Enter your maximum budget (" + dbMinBudget + " - " + dbMaxBudget + "): ");
                 String input = scanner.nextLine();
                 if (input.matches("\\d+")) {
                     Maxbudget = Integer.parseInt(input);
-                    if (Maxbudget >= 5000 && Maxbudget <= 50000) {
+                    if (Maxbudget >= dbMinBudget && Maxbudget <= dbMaxBudget) {
                         if (Maxbudget >= Minbudget) {
                             break; // valid pair, exit max loop and then outer
                         } else {
@@ -49,7 +72,8 @@ public class Userinput {
                             continue outerLoop;
                         }
                     } else {
-                        System.out.println(" Budget must be between 5000 and 50000.");
+                        System.out.println(" Budget must be between " + dbMinBudget + " and " + dbMaxBudget + ".");
+                        // go back to outer loop to re-enter min
                     }
                 } else {
                     System.out.println(" Invalid input. Please enter a number.");
@@ -157,9 +181,19 @@ public class Userinput {
                     break;
                 } else {
                     System.out.println(" Invalid number of guests for the selected room type.");
-                    if (roomType == 1) System.out.println(" Single room can only have 1 guest.");
-                    else if (roomType == 2) System.out.println(" Double room can have up to 2 guests.");
-                    else if (roomType == 3) System.out.println(" Suite can have up to 4 guests.");
+                    switch (roomType) {
+                        case 1:
+                            System.out.println(" Single room can only have 1 guest.");
+                            break;
+                        case 2:
+                            System.out.println(" Double room can have up to 2 guests.");
+                            break;
+                        case 3:
+                            System.out.println(" Suite can have up to 4 guests.");
+                            break;
+                        default:
+                            break;
+                    }
                 }
 
             } else {
@@ -173,14 +207,14 @@ public class Userinput {
         );
         preferencesQueue.add(userPreferences);
 
-        System.out.println("\n Preferences saved successfully.");
+        System.out.println(" Preferences saved successfully.");
 
         // Print the user's entered preferences in a single horizontal summary line
         String wifiStr = userPreferences.isWifi() ? "Yes" : "No";
         String acStr = userPreferences.isAirConditioning() ? "Yes" : "No";
         String poolStr = userPreferences.ispool() ? "Yes" : "No";
 
-        String summary = String.format("=== My Preferences === \n Budget: %d-%d  | Travel: %s  | Room: %s  | View: %s  | Floor: %d  | WiFi: %s  | AC: %s  | Pool: %s  | Guests: %d",
+        String summary = String.format("=== My Preferences ===  Budget: %d-%d  | Travel: %s  | Room: %s  | View: %s  | Floor: %d  | WiFi: %s  | AC: %s  | Pool: %s  | Guests: %d",
                 userPreferences.getMinbudget(), userPreferences.getMaxbudget(), userPreferences.getTravel(),
                 userPreferences.getRoomTypeName(), userPreferences.getView(), userPreferences.getFloorlvl(),
                 wifiStr, acStr, poolStr, userPreferences.getGuests());
