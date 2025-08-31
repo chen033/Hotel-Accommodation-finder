@@ -54,7 +54,7 @@ public class Main {
                         RoomApp app = new RoomApp();
                         app.start();
                     } else {
-                        System.out.println("Access denied. Returning to main menu.");
+                        System.out.println("Access denied. Returning to main menu...");
                     }
                 }
                 case 2 -> {
