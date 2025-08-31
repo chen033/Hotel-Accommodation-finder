@@ -67,14 +67,13 @@ public class RoomMatcher {
 
         for (Room room : availableRooms) {
             double adjustedBudget = applyBusinessSurchargeIfNeeded(room, pref);
-            double budget = adjustedBudget; // use adjusted budget for budget-only matching
             double diff;
-            if (budget >= min && budget <= max) {
+            if (adjustedBudget >= min && adjustedBudget <= max) {
                 diff = 0; // inside budget is best
-            } else if (budget < min) {
-                diff = min - budget;
+            } else if (adjustedBudget < min) {
+                diff = min - adjustedBudget;
             } else {
-                diff = budget - max;
+                diff = adjustedBudget - max;
             }
             // Score: higher is better. Inside budget gives highest score (100).
             // For outside budget, penalize by difference but cap penalty so scores remain comparable.
