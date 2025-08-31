@@ -21,8 +21,8 @@ public class Main {
         Scanner sc = new Scanner(System.in);
 
         while (true) {
-            System.out.println("Select functionality to run:..........");
-            System.out.println("1. Room Manager  — Requires admin login. You will be prompted for username/password.");
+            System.out.println("Select functionality to run:");
+            System.out.println("1. Room Manager  — .....Requires admin login. You will be prompted for username/password.");
             System.out.println("   Use username: admin  password: admin123 to access the Room Manager menu.");
             System.out.println("2. Accommodation finder");
             System.out.println("3. Exit");
@@ -54,12 +54,12 @@ public class Main {
                         RoomApp app = new RoomApp();
                         app.start();
                     } else {
-                        System.out.println("Access denied. Returning to main menu.");
+                        System.out.println("Access denied. Returning to main menu...");
                     }
                 }
                 case 2 -> {
                     // Collect user preferences once and create copies so we don't re-prompt the user
-                    Queue<UserPreferences> userPrefsQueue = Userinput.getUserPreferences();
+                    Queue<UserPreferences> userPrefsQueue = Userinput.getUserPreferences(sc);
 
                     // Make two independent copies; matchPreferences will poll its copy
                     Queue<UserPreferences> prefsForMatching = new LinkedList<>(userPrefsQueue);

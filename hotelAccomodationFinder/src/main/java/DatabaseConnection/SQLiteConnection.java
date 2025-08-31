@@ -17,6 +17,14 @@ public class SQLiteConnection {
             return null;
         }
 
+        // Try to explicitly load the SQLite JDBC driver to give a clearer error if it's not on the classpath
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            System.out.println("SQLite JDBC driver class not found on classpath: " + e.getMessage());
+            // continue; DriverManager may still work if driver auto-registers, but warn user.
+        }
+
         try {
             Connection conn = DriverManager.getConnection(URL);
            // System.out.println("Connected to SQLite database!");
