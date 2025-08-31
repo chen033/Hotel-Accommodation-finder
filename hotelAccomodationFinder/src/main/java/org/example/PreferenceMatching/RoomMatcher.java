@@ -11,7 +11,7 @@ public class RoomMatcher {
     public static class ScoredRoom {
         public Room room;
         public double score;
-        public double adjustedBudget; // budget after business surcharge if any
+        public double adjustedBudget;
 
         public ScoredRoom(Room room, double score, double adjustedBudget) {
             this.room = room;
@@ -34,30 +34,27 @@ public class RoomMatcher {
                 double score = calculateScore(user, room, adjustedBudget);
                 ScoredRoom sr = new ScoredRoom(room, score, adjustedBudget);
 
-                if (score >= 70) { // Perfect match threshold
+                if (score >= 70) {
                     rankedRooms.add(sr);
                     perfectMatchFound = true;
-                    break; // stop at first perfect match
+                    break;
                 } else if (score > 0) {
-                    partialStack.push(sr); // store partial match
+                    partialStack.push(sr);
                 }
             }
 
-            // If no perfect match, backtrack to best partial match
+
             if (!perfectMatchFound && !partialStack.isEmpty()) {
                 ScoredRoom bestPartial = findBestPartial(partialStack);
                 rankedRooms.add(bestPartial);
             }
-
-            partialStack.clear(); // clear stack for next preference
+            partialStack.clear();
         }
 
-        // Sort rooms by score descending
         rankedRooms.sort((a, b) -> Double.compare(b.score, a.score));
         return rankedRooms;
     }
 
-    // New: match only by budget, return all rooms sorted by budget-closeness score
     public List<ScoredRoom> matchByBudget(UserPreferences pref, RoomManager roomManager) {
         List<ScoredRoom> scored = new ArrayList<>();
         LinkedList<Room> availableRooms = roomManager.getRooms();
@@ -69,55 +66,45 @@ public class RoomMatcher {
             double adjustedBudget = applyBusinessSurchargeIfNeeded(room, pref);
             double diff;
             if (adjustedBudget >= min && adjustedBudget <= max) {
-                diff = 0; // inside budget is best
+                diff = 0;
             } else if (adjustedBudget < min) {
                 diff = min - adjustedBudget;
             } else {
                 diff = adjustedBudget - max;
             }
-            // Score: higher is better. Inside budget gives highest score (100).
-            // For outside budget, penalize by difference but cap penalty so scores remain comparable.
             double score = Math.max(0, 100 - Math.min(100, diff));
             scored.add(new ScoredRoom(room, score, adjustedBudget));
         }
 
-        // Sort by score desc, then by budget asc for tie-breaker (use adjustedBudget)
         scored.sort((a, b) -> {
             int c = Double.compare(b.score, a.score);
             if (c != 0) return c;
             return Double.compare(a.adjustedBudget, b.adjustedBudget);
         });
 
-        // Return full sorted list (caller will choose top 10 and combine inside/outside)
         return scored;
     }
 
     private double calculateScore(UserPreferences user, Room room, double adjustedBudget) {
         double score = 0;
 
-        // Budget (use adjustedBudget when assessing match)
         if (adjustedBudget >= user.getMinbudget() && adjustedBudget <= user.getMaxbudget())
             score += 30;
 
-        // Room type
         if (room.getType().equalsIgnoreCase(user.getRoomTypeName()))
             score += 20;
 
-        // View
         if (room.getRoomView().equalsIgnoreCase(user.getView()))
             score += 10;
 
-        // Floor
         if (room.getFloorLevel() == user.getFloorlvl())
             score += 10;
 
-        // Facilities
         String fac = room.getFacilities().toLowerCase();
         if (user.isWifi() && fac.contains("wifi")) score += 7;
         if (user.isAirConditioning() && fac.contains("aircondition")) score += 7;
         if (user.ispool() && fac.contains("pool")) score += 6;
 
-        // Guests
         if (room.getGuestNumber() >= user.getGuests()) score += 10;
 
         return score;
@@ -132,7 +119,6 @@ public class RoomMatcher {
         return best;
     }
 
-    // Helper: return adjusted budget applying business surcharge if user.travel == Business
     private double applyBusinessSurchargeIfNeeded(Room room, UserPreferences user) {
         double base = room.getBudgetPerNight();
         if (user == null || user.getTravel() == null) return base;

@@ -9,12 +9,10 @@ import org.example.ManageRoom.Room;
 public class Userinput {
 
     public static Queue<UserPreferences> getUserPreferences(Scanner scanner) {
-        // Scanner scanner = new Scanner(System.in);
         Queue<UserPreferences> preferencesQueue = new LinkedList<>();
 
         System.out.println("=== Welcome to Hotel room Finder ===");
 
-        // Determine real-time budget bounds from DB
         RoomManager roomManager = new RoomManager();
         LinkedList<Room> roomList = roomManager.getRooms();
         int dbMinBudget = 5000;
@@ -27,20 +25,17 @@ public class Userinput {
                 if (b < dbMinBudget) dbMinBudget = b;
                 if (b > dbMaxBudget) dbMaxBudget = b;
             }
-            // Fallback if something went wrong
             if (dbMinBudget == Integer.MAX_VALUE || dbMaxBudget == Integer.MIN_VALUE) {
                 dbMinBudget = 5000;
                 dbMaxBudget = 50000;
             }
         }
 
-        // Budget inputs (wrap both min and max in an outer loop so we can re-enter min if max < min)
         int Minbudget;
         int Maxbudget;
 
         outerLoop:
         while (true) {
-            // MinBudget
             while (true) {
                 System.out.print("Enter your minimum budget (" + dbMinBudget + " - " + dbMaxBudget + "): ");
                 String input = scanner.nextLine();
@@ -50,14 +45,12 @@ public class Userinput {
                         break;
                     } else {
                         System.out.println(" Budget must be between " + dbMinBudget + " and " + dbMaxBudget + ".");
-                         // go back to outer loop to re-enter min
                     }
                 } else {
                     System.out.println(" Invalid input. Please enter a number.");
                 }
             }
 
-            // MaxBudget
             while (true) {
                 System.out.print("Enter your maximum budget (" + dbMinBudget + " - " + dbMaxBudget + "): ");
                 String input = scanner.nextLine();
@@ -68,23 +61,19 @@ public class Userinput {
                             break; // valid pair, exit max loop and then outer
                         } else {
                             System.out.println(" Maximum budget must be greater than or equal to minimum budget.");
-                            // go back to outer loop so Minbudget is requested again
                             continue outerLoop;
                         }
                     } else {
                         System.out.println(" Budget must be between " + dbMinBudget + " and " + dbMaxBudget + ".");
-                        // go back to outer loop to re-enter min
                     }
                 } else {
                     System.out.println(" Invalid input. Please enter a number.");
                 }
             }
 
-            // If we reach here both Minbudget and Maxbudget are valid
             break;
         }
 
-        // Travel purpose
         String travel;
         while (true) {
             System.out.print("Are you traveling for Business or Leisure? ");
@@ -97,7 +86,6 @@ public class Userinput {
             }
         }
 
-        // Room Type
         int roomType;
         while (true) {
             System.out.println("Select Room Type:");
@@ -115,7 +103,6 @@ public class Userinput {
             }
         }
 
-        // View
         int view;
         while (true) {
             System.out.println("Do you prefer a Sea view, Garden view, or City view?");
@@ -133,7 +120,6 @@ public class Userinput {
             }
         }
 
-        // floorlvl
         int floorlvl;
         while (true) {
             System.out.print("What is your preferred floor level? : ");
@@ -146,16 +132,12 @@ public class Userinput {
             }
         }
 
-        // WiFi
         boolean wifi = askYesNo(scanner, "Do you need WiFi? (Yes/No): ");
 
-        // Air Conditioning
         boolean ac = askYesNo(scanner, "Do you need Air Conditioning? (Yes/No): ");
 
-        // Pool
         boolean pool = askYesNo(scanner, "Do you need pool access? (Yes/No): ");
 
-        // Guests (validate based on room type)
         int guests;
         while (true) {
             System.out.print("Number of guests: ");
@@ -201,7 +183,6 @@ public class Userinput {
             }
         }
 
-        // Create UserPreferences object and add to queue
         UserPreferences userPreferences = new UserPreferences(
                 Minbudget, Maxbudget, travel, roomType, view, floorlvl, wifi, ac, pool, guests
         );
@@ -209,7 +190,6 @@ public class Userinput {
 
         System.out.println(" Preferences saved successfully.");
 
-        // Print the user's entered preferences in a single horizontal summary line
         String wifiStr = userPreferences.isWifi() ? "Yes" : "No";
         String acStr = userPreferences.isAirConditioning() ? "Yes" : "No";
         String poolStr = userPreferences.ispool() ? "Yes" : "No";
@@ -220,9 +200,6 @@ public class Userinput {
                 wifiStr, acStr, poolStr, userPreferences.getGuests());
 
         System.out.println(summary);
-
-        // If user is traveling for business, previously we displayed an adjustment block. Removed UI per request.
-        // Business UI removed; business surcharges are still applied internally when matching.
 
         return preferencesQueue;
     }

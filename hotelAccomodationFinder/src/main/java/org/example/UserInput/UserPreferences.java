@@ -31,7 +31,6 @@ public class UserPreferences {
     public int getMaxbudget() { return Maxbudget; }
     public String getTravel() { return travel; }
 
-    // --- Room Type ---
     public int getRoomTypeNumber() { return roomType; }
     public String getRoomTypeName() {
         switch (roomType) {
@@ -42,7 +41,6 @@ public class UserPreferences {
         }
     }
 
-    // --- View ---
     public int getViewNumber() { return view; }
     public String getView() {   // keep name consistent with RoomMatcher
         switch (view) {

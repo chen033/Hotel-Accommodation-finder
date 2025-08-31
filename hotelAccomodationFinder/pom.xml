@@ -16,20 +16,18 @@
     </properties>
 
     <dependencies>
-        <!-- SQLite JDBC driver -->
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.45.3.0</version> <!-- latest as of 2025 -->
+            <version>3.45.3.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>22.0.2</version> <!-- latest -->
+            <version>22.0.2</version>
         </dependency>
 
-        <!-- JavaFX FXML (optional, for .fxml UI files) -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
