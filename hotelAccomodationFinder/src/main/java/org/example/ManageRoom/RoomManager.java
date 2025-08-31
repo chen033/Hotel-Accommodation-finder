@@ -12,7 +12,11 @@ public class RoomManager {
     private final Connection connection = SQLiteConnection.connect();
 
     public RoomManager() {
-        loadRoomsFromDB(); // load rooms from database into LinkedList
+        if (connection != null) {
+            loadRoomsFromDB(); // load rooms from database into LinkedList
+        } else {
+            System.out.println("Warning: Database connection unavailable; continuing with empty room list.");
+        }
     }
 
     private void loadRoomsFromDB() {

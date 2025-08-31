@@ -9,7 +9,20 @@ public class RoomOutput {
         int count = 0;
         for (RoomMatcher.ScoredRoom sr : rankedRooms) {
             if (count >= 10) break;
-            System.out.println(sr.room + " | Score: " + sr.score);
+            double base = sr.room.getBudgetPerNight();
+            double adjusted = sr.adjustedBudget;
+            String outputLine;
+            if (Double.compare(adjusted, base) == 0) {
+                // No surcharge: leisure user — print room (contains base budget) and score
+                outputLine = sr.room + " | Score: " + sr.score;
+            } else {
+                // Business user: show room (with base budget) PLUS a separate Business Budget column
+                String roomStr = sr.room.toString();
+                double diff = adjusted - base;
+                String businessInfo = String.format(" | Business Budget: LKR.%,.0f (+LKR.%,.0f) | Meals: Breakfast & Dinner free", adjusted, diff);
+                outputLine = roomStr + businessInfo + " | Score: " + sr.score;
+            }
+            System.out.println(outputLine);
             count++;
         }
         if (count == 0) {
@@ -48,7 +61,7 @@ public class RoomOutput {
         double max = prefs.getMaxbudget();
 
         for (RoomMatcher.ScoredRoom sr : scoredRooms) {
-            double b = sr.room.getBudgetPerNight();
+            double b = sr.adjustedBudget;
             if (b >= min && b <= max) inside.add(sr);
             else outside.add(sr);
         }
@@ -60,7 +73,18 @@ public class RoomOutput {
             System.out.println("\n-- Rooms within your budget --");
             for (RoomMatcher.ScoredRoom sr : inside) {
                 if (printed >= 10) break;
-                System.out.println((printed + 1) + ". " + sr.room + " | Budget: " + sr.room.getBudgetPerNight() + " | Score: " + sr.score);
+                double base = sr.room.getBudgetPerNight();
+                double adjusted = sr.adjustedBudget;
+                String line;
+                if (Double.compare(adjusted, base) == 0) {
+                    line = (printed + 1) + ". " + sr.room + " | Score: " + sr.score;
+                } else {
+                    String roomStr = sr.room.toString();
+                    double diff = adjusted - base;
+                    String businessInfo = String.format(" | Business Budget: LKR.%,.0f (+LKR.%,.0f) | Meals: Breakfast & Dinner free", adjusted, diff);
+                    line = (printed + 1) + ". " + roomStr + businessInfo + " | Score: " + sr.score;
+                }
+                System.out.println(line);
                 printed++;
             }
         }
@@ -70,7 +94,18 @@ public class RoomOutput {
             System.out.println("\n-- Additional rooms close to your budget --");
             for (RoomMatcher.ScoredRoom sr : outside) {
                 if (printed >= 10) break;
-                System.out.println((printed + 1) + ". " + sr.room + " | Budget: " + sr.room.getBudgetPerNight() + " | Score: " + sr.score);
+                double base = sr.room.getBudgetPerNight();
+                double adjusted = sr.adjustedBudget;
+                String line;
+                if (Double.compare(adjusted, base) == 0) {
+                    line = (printed + 1) + ". " + sr.room + " | Score: " + sr.score;
+                } else {
+                    String roomStr = sr.room.toString();
+                    double diff = adjusted - base;
+                    String businessInfo = String.format(" | Business Budget: LKR.%,.0f (+LKR.%,.0f) | Meals: Breakfast & Dinner free", adjusted, diff);
+                    line = (printed + 1) + ". " + roomStr + businessInfo + " | Score: " + sr.score;
+                }
+                System.out.println(line);
                 printed++;
             }
         }

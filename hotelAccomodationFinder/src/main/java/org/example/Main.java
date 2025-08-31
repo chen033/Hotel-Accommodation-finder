@@ -59,7 +59,7 @@ public class Main {
                 }
                 case 2 -> {
                     // Collect user preferences once and create copies so we don't re-prompt the user
-                    Queue<UserPreferences> userPrefsQueue = Userinput.getUserPreferences();
+                    Queue<UserPreferences> userPrefsQueue = Userinput.getUserPreferences(sc);
 
                     // Make two independent copies; matchPreferences will poll its copy
                     Queue<UserPreferences> prefsForMatching = new LinkedList<>(userPrefsQueue);

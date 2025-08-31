@@ -8,8 +8,8 @@ import org.example.ManageRoom.Room;
 
 public class Userinput {
 
-    public static Queue<UserPreferences> getUserPreferences() {
-        Scanner scanner = new Scanner(System.in);
+    public static Queue<UserPreferences> getUserPreferences(Scanner scanner) {
+        // Scanner scanner = new Scanner(System.in);
         Queue<UserPreferences> preferencesQueue = new LinkedList<>();
 
         System.out.println("=== Welcome to Hotel room Finder ===");
@@ -214,12 +214,15 @@ public class Userinput {
         String acStr = userPreferences.isAirConditioning() ? "Yes" : "No";
         String poolStr = userPreferences.ispool() ? "Yes" : "No";
 
-        String summary = String.format("=== My Preferences ===  Budget: %d-%d  | Travel: %s  | Room: %s  | View: %s  | Floor: %d  | WiFi: %s  | AC: %s  | Pool: %s  | Guests: %d",
+        String summary = String.format("=== My Preferences === \n Budget: %d-%d  | Travel: %s  | Room: %s  | View: %s  | Floor: %d  | WiFi: %s  | AC: %s  | Pool: %s  | Guests: %d",
                 userPreferences.getMinbudget(), userPreferences.getMaxbudget(), userPreferences.getTravel(),
                 userPreferences.getRoomTypeName(), userPreferences.getView(), userPreferences.getFloorlvl(),
                 wifiStr, acStr, poolStr, userPreferences.getGuests());
 
         System.out.println(summary);
+
+        // If user is traveling for business, previously we displayed an adjustment block. Removed UI per request.
+        // Business UI removed; business surcharges are still applied internally when matching.
 
         return preferencesQueue;
     }
